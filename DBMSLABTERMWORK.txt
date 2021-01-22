@@ -1,0 +1,483 @@
+1.PERSON (driver – id #: String, name: string, address: string)
+CAR (regno: string, model: string, year: int)
+ACCIDENT (report-number: int, accd-date: date, location: string)
+OWNS (driver-id #:string, Regno:string)
+PARTICIPATED (driver-id: string, Regno:string, report-number:int, damage amount:int)
+(i)    Create the above tables by properly specifying the primary keys and the foreign keys.
+(ii)   Enter at least five tuples for each relation.
+(iii)  Demonstrate how you
+a. Update the damage amount to 25000 for the car with a specific Regno in the
+ACCIDENT table with report number 12.
+b. Add a new accident to the database.
+(iv)  Find the total number of people who owned cars that were involved in accidents in
+2008.
+(v)    Find the number of accidents in which cars belonging to a specific model were
+involved.
+vi) Find number of cars involved in each accident.
+vii) Find total damage amount of each accident.
+viii) List the report no ,which has max damage amount.
+ix) list the car regno, which has maximum damage amount in a specific accident.
+x) List the number of times each time every driver has met with an accident.
+xi) List the cars that have not met with accident.
+xii) List the number of times the same combination driver_id and car reg_no has met with
+accidents.
+(i)    Create the above tables by properly specifying the primary keys and the foreign keys.
+
+create table person (
+    driver_id  char(10) not null,
+    name       varchar(20)     not null,
+    address    varchar(50)     not null,
+    primary key(driver_id)
+    );
+ describe person	
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ DRIVER_ID                                 NOT NULL CHAR(10)
+ NAME                                      NOT NULL VARCHAR2(20)
+ ADDRESS                                   NOT NULL VARCHAR2(50)
+
+===========================================================================================
+
+create table car(
+    regno      char(10) not null primary key,
+    model      varchar(15)     not null,
+    year       Date    not null);
+
+Table created.
+
+ describe car
+ Name                                                                                                                                               Null?    Type
+ -------------------------------------------------------------------------------------------------------------------------------------------------- -------- ------
+ REGNO                                                                                                                                              NOT NULL CHAR(10)
+ MODEL                                                                                                                                              NOT NULL VARCHAR2(15)
+ YEAR																		    NOT NULL DATE
+
+==============================================================================
+
+  create table accident (
+    report_number      int     primary key,
+    acc_date   date    ,
+    location   varchar(50));
+
+
+ describe accident
+ Name                                                                                                                                               Null?    Type
+ -------------------------------------------------------------------------------------------------------------------------------------------------- -------- ----
+ REPORT_NUMBER                                                                                                                                      NOT NULL NUMBER(38)
+ ACC_DATE                                                                                                                                                    DATE
+ LOCATION                                                                                                                                                    VARCHAR2(50)
+
+===============================================================================
+
+create table owns(
+  driver_id  char(10),
+  regno      char(10),
+  primary key(driver_id,regno),
+  foreign key (driver_id) references person(driver_id) on delete cascade ,
+  foreign key (regno)     references car(regno) on delete cascade);
+
+
+describe owns;
+ Name                                                                                                                                               Null?    Type
+ -------------------------------------------------------------------------------------------------------------------------------------------------- -------- -----
+ DRIVER_ID                                                                                                                                          NOT NULL CHAR(10)
+ REGNO                                                                                                                                              NOT NULL CHAR(10)
+
+=========================================================================================
+
+create table participated (
+   report_number      int,
+    driver_id  char(10) ,
+    regno      char(10) ,
+    damageamount       int,
+    primary key (driver_id,report_number),
+    foreign key(driver_id) references person(driver_id) on delete cascade,
+    foreign key (regno) references car(regno) on delete cascade,
+    foreign key (report_number) references accident(report_number) on delete cascade);
+
+describe participated
+ Name                                                                                                                                               Null?    Type
+ -------------------------------------------------------------------------------------------------------------------------------------------------- -------- -----
+ REPORT_NUMBER                                                                                                                                      NOT NULL NUMBER(38)
+ DRIVER_ID                                                                                                                                          NOT NULL CHAR(10)
+ REGNO                                                                                                                                                       CHAR(10)
+ DAMAGEAMOUNT                                                                                                                                                NUMBER(38)
+
+=============================================================================================================================================================================================
+
+(ii)   Enter at least five tuples for each relation.
+
+a.Person table
+  insert all
+    into person values('d20','vijay','hubali')
+    into person values('d30','ankit','bangalore')
+    into PERSON values (’d40’,’ajay’,’Belgaum’) 
+    into PERSON values (’d50’,’sdm’,’Dharwad’) 
+    select * from dual;
+
+DRIVER_ID  NAME                 ADDRESS
+---------- -------------------- ---------------
+d10        anand                dharwad
+d20        vijay                hubali
+d30        ankit                bangalore
+d40        ajay                 belgaum
+d50        sdm                  dharwad
+
+b. Car table
+insert all
+   into car values('r2','honda',2020)
+   into car values('r3','maruti',2019)
+   into car values('r4','maruti',2020)
+   select * from dual;
+
+REGNO      MODEL                 YEAR
+---------- --------------- ----------
+r1         honda                 2019
+r2         honda                 2020
+r3         maruti                2019
+r4         maruti                2020
+
+
+c.Accident table
+insert all
+into accident values(100, '22-Feb-18 ','Dharwad')
+into accident values(200, '18-Mar-20','Dharwad');
+into accident values(300, '20-Jun-02','Hubli');
+select * from dual;
+
+REPORT_NUMBER ACC_DATE           LOCATION
+------------- ------------------ --------------------------------------------------
+          100 18-FEB-22          dharwad
+          200 18-MAR-20          Dharwad
+          300 20-JUN-02          Hubli
+
+d. owns table
+insert all
+    into owns values('d10','r1')
+    into owns values('d10','r2')
+    into owns values('d30','r2')
+    into owns values('d40','r4')
+    into owns values('d20','r1')
+    select * from dual;
+
+DRIVER_ID  REGNO
+---------- ----------
+d10        r1
+d10        r2
+d20        r3
+d30        r2
+d40        r4
+d20        r1
+
+e. participated table
+insert into participated values(’d10', ’R2’,100,15000); 
+insert into participeted values(’d10’, ’R2’,200,25000);
+insert into participeted values(’d20’, ’R3’,100,10000); 
+insert into participeted values(’d30’, ’R3’,200,45000); 
+insert into participeted values(’d40’, ’R4’,200,12000);
+insert into participeted values(’d30’, ’R3’,300,17000); 
+insert into participeted values(’d40’, ’R3’,400,14000);
+
+
+ REPORT_NUMBER DRIVER_ID  REGNO      DAMAGEAMOUNT
+------------- ---------- ---------- ------------
+          100 d10        r2                15000
+          200 d10        r2                25000
+          100 d20        r3                10000
+          200 d30        r3                45000
+          200 d40        r4                12000
+          300 d30        r3                17000
+
+
+
+=============================================================================================================
+iii)
+a. Update  the  damage  amount  to  25000  for  the  car  with  a  specific  Regno  in  the ACCIDENT table with report number 12.
+
+
+since the entire which we made doesnt have any reportnumber with the value equal to 12
+to show the changes the report number 100 damage amount  has been updated to 25000
+
+SQL> update  participated
+    set damageamount = 25000
+    where report_number=100;
+
+SQL> select * from participated;
+
+REPORT_NUMBER DRIVER_ID  REGNO      DAMAGEAMOUNT
+------------- ---------- ---------- ------------
+          100 d10        r2                25000
+          200 d10        r2                25000
+          100 d20        r3                25000
+          200 d30        r3                45000
+          200 d40        r4                12000
+          300 d30        r3                17000
+
+b. Add a new accident to the database.
+
+
+SQL> insert into accident values(400,'21-jan-21','sdm');
+
+
+SQL> select * from accident;
+
+REPORT_NUMBER ACC_DATE           LOCATION
+------------- ------------------ --------------------------------------------------
+          100 18-FEB-22          dharwad
+          200 18-MAR-20          Dharwad
+          300 20-JUN-02          Hubli
+          400 21-JAN-21          sdm
+
+
+=====================================================================================================
+iv) Find the total number of people who owned cars that were involved in accidents in 2008.
+
+  select count(distinct driver_id)
+       from  owns
+        where driver_id in (
+        select p.driver_id
+        from participated p , accident a
+        where p.report_number = a.report_number and acc_date like '_______02');
+
+COUNT(DISTINCTDRIVER_ID)
+------------------------
+                       1
+=====================================================================================================
+
+v) Find the number of accidents in which cars belonging to a specific model were involved.
+ 
+ select model , count(*)
+    from car c,participated p
+    where p.regno = c.regno
+    group by model;
+
+MODEL             COUNT(*)
+--------------- ----------
+maruti                   5
+honda                    2
+
+=====================================================================================================
+
+vi) Find number of cars involved in each accident.
+
+select count(*) from participated p , car c where c.regno = p.regno;
+
+  COUNT(*)
+----------
+         7
+vii) Find total damage amount of each accident.
+SQL> select a.report_number, sum(damageamount)
+        from accident a , participated p
+        where p.report_number = a.report_number
+        group by a.report_number;
+
+REPORT_NUMBER SUM(DAMAGEAMOUNT)
+------------- -----------------
+          100             25000
+          400             14000
+          300             17000
+          200             82000
+
+=====================================================================================================
+
+viii) List the report no ,which has max damage amount.
+select report_number from participated where damageamount = (select max(damageamount) from participated);
+
+REPORT_NUMBER
+-------------
+          200
+
+=====================================================================================================
+
+ix) list the car regno, which has maximum damage amount in a specific accident.
+SQL> select regno from participated where damageamount = (select max(damageamount) from participated);
+
+REGNO
+----------
+r3
+
+=====================================================================================================
+
+x) List the number of times each time every driver has met with an accident.
+SQL> select driver_id,count(*) from participated group by driver_id;
+
+DRIVER_ID    COUNT(*)
+---------- ----------
+d10                 2
+d20                 1
+d30                 2
+d40                 2
+
+=====================================================================================================
+
+xi) List the cars that have not met with accident.
+SQL> select c.regno from car c where not exists (
+    select p.regno from participated p where p.regno = c.regno);
+
+REGNO
+----------
+r1
+
+=====================================================================================================
+
+xii) List the number of times the same combination driver_id and car reg_no has met with
+accidents.
+
+SQL> select driver_id,regno ,count(*) from participated group by(driver_id,regno);
+
+DRIVER_ID  REGNO        COUNT(*)
+---------- ---------- ----------
+d20        r3                  1
+d40        r3                  1
+d40        r4                  1
+d30        r3                  2
+d10        r2                  2
+
+
+
+3. Consider the following relations for an order processing database application in a company:
+
+CUSTOMER (cust #: int , cname: string, city: string)
+ORDER (order #: int, odate: date, cust #: int, ord-Amt: int)
+ORDER – ITEM (order #: int, item #: int, qty: int)
+ITEM (item # : int, unit price: int)
+SHIPMENT (order #: int, warehouse#: int, ship-date: date)
+WAREHOUSE (warehouse #: int, city: string)
+(i)   Create the above tables by properly specifying the primary keys and the foreign keys.
+
+(ii)  Enter at least five tuples for each relation.
+(iii) Produce a listing: CUSTNAME, #oforders, AVG_ORDER_AMT, where the middle
+column is the total numbers of orders by the customer and the last column is the
+average order amount for that customer.
+(iv)  List the order# for orders that were shipped from all the warehouses that the company
+has in a specific city.
+(v)   Demonstrate the deletion of an item from the ITEM table and demonstrate a method
+of handling the rows in the ORDER_ITEM table that contain this particular item.
+(vi) List the order no, which have max item present.
+(vii) List the warehouse#, which involve/s maximum orders.
+(viii) List the day-wise total order amount in the year 2012.
+(ix) List the customer name that has placed orders amounting maximum sum.
+(x) List the item# which was never bought in the year 2011.
+(xi) List the city that has minimum orders for a particular item.
+(xii) List the customer_id, CName and city name whose city is same as that of the city in
+which warehouses are situated.
+
+
+
+
+i)Create the above tables by properly specifying the primary keys and The foreign keys
+ 
+
+
+CREATE TABLE CUSTOMER (
+CUST# NUMBER(5),
+CNAME VARCHAR2(15) NOT NULL, CITY VARCHAR2(15),
+PRIMARY KEY(CUST#)
+);
+
+CREATE TABLE CUSTORDER (
+ORDER# NUMBER(5) CONSTRAINT PK1 PRIMARY KEY, ODATE DATE,
+CUST# NUMBER(5) REFERENCES CUSTOMER(CUST#), ORD_AMT NUMBER(5)
+);
+
+CREATE TABLE ITEM (
+ITEM NUMBER(5) CONSTRAINT PK2 PRIMARY KEY, UNITPRICE NUMBER(9,2) NOT NULL
+);
+
+CREATE TABLE ORDER_ITEM (
+ORDER# NUMBER (5),
+ITEM NUMBER (5), QTY NUMBER(4),
+FOREIGN KEY(ORDER#) REFERENCES CUSTORDER(ORDER#), FOREIGN KEY(ITEM) REFERENCES ITEM(ITEM),
+PRIMARY KEY(ORDER#,ITEM)
+);
+
+
+CREATE TABLE WAREHOUSE (
+WAREHOUSE# NUMBER(5), CITY VARCHAR2(15), PRIMARY KEY(WAREHOUSE#)
+);
+
+CREATE TABLE SHIPMENT (
+ORDER# NUMBER(5), WAREHOUSE# NUMBER(5), SHIP_DATE DATE,
+FOREIGN KEY(ORDER#) REFERENCES CUSTORDER(ORDER#), FOREIGN KEY(WAREHOUSE#) REFERENCES
+WAREHOUSE(WAREHOUSE#),
+PRIMARY KEY(ORDER#,WAREHOUSE#)
+);
+
+ii)  Enter at least five tuples for each relation.
+a)CUSTOMER
+insert all
+    into CUSTOMER values(1,'ABC1','HUBLI')
+    into CUSTOMER values(2,'ABC2','BLORE')
+    into CUSTOMER values(3,'ABC3','MYSORE')
+    into CUSTOMER values(4,'ABC4','DHARWAD')
+    into CUSTOMER values(5,'ABC5','BLORE')
+    select * from dual;
+
+b)CUSTORDER
+insert all
+    into ORDER values(1,'1-jan-06',2,5000)
+    into ORDER values(2,'26-apr-06',3,2500)
+    into ORDER values(3,'27-apr-06',3,1000)
+    into ORDER values(4,'30-apr-06',5,1000)
+    into ORDER values(5,'25-may-06',1,5000)
+    select * from dual;
+
+c)ITEM
+insert all 
+   into ITEM values(1,2500)
+   into ITEM values(2,5000)
+   into ITEM values(3,1000)
+   into ITEM values(4,5)
+   into ITEM values(5,200)
+   select * from dual
+
+d)ORDER_ITEM
+insert all 
+    into ORDER_ITEM values(1,2,1)
+    into ORDER_ITEM values(1,4,1)
+    into ORDER_ITEM values(2,1,1)
+    into ORDER_ITEM values(3,5,5)
+    into ORDER_ITEM values(4,2,1)
+    select * from dual;
+
+e)WAREHOUSE
+insert all 
+    into WAREHOUSE values(1,'HUBLI')
+    into WAREHOUSE values(2,'BLORE')
+    into WAREHOUSE values(3,'DHARWAD')
+    into WAREHOUSE values(4,'MYSORE')
+    into WAREHOUSE values(5,'KOLAR')
+    select * from dual;
+
+f)SHIPMENT
+insert all 
+    into SHIPMENT values(1,1,'30-apr-06')
+    into SHIPMENT values(2,2,'29-apr-06')
+    into SHIPMENT values(3,2,'24-apr-06')
+    into SHIPMENT values(4,5,'30-apr-06')
+    into SHIPMENT values(5,3,'01-apr-06')
+
+iii) Produce a listing: CUSTNAME, #oforders, AVG_ORDER_AMT, where the middle
+column is the total numbers of orders by the customer and the last column is the
+average order amount for that customer.
+
+SELECT C.CNAME, COUNT(*),AVG(CO.ORD_AMT) FROM CUSTOMER C, ORDER O
+WHERE
+C.CUST#=O.CUST# GROUP BY C.CNAME;
+
+
+iv)List the order# for orders that were shipped from all the warehouses that the company
+has in a specific city.
+
+SELECT ORDER#
+FROM WAREHOUSE W, SHIPMENT S
+WHERE W.WAREHOUSE#=S.WAREHOUSE# AND CITY='BLORE';
+
+
+v)Demonstrate the deletion of an item from the ITEM table and demonstrate a method
+of handling the rows in the ORDER_ITEM table that contain this particular item.
+
+SELECT CONSTRAINT_NAME,CONSTRAINT_TYPE FROM USER_CONSTRAINTS
+WHERE TABLE_NAME='ORDER_ITEM';
+CONSTRAINT_NAME	C
+
